@@ -1,0 +1,47 @@
+---
+- name: install | Downloading Guacamole Server package # noqa risky-file-permissions
+  ansible.builtin.get_url:
+    url: "{{ guacamole_dl_url + '/source/' + guacamole_server_package }}"
+    dest: "{{ guacamole_src_dir }}"
+  become: true
+
+- name: install | Extracting Guacamole Server package
+  ansible.builtin.unarchive:
+    src: "{{ guacamole_src_dir + '/' + guacamole_server_package }}"
+    dest: "{{ guacamole_src_dir }}"
+    remote_src: true
+  register: extract
+  become: true
+
+- name: install | Checking if Guacamole Server is installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/guaclog
+  register: _guacamole_server_installed
+
+- name: install | Configuring Guacamole Server build # noqa no-changed-when
+  ansible.builtin.command: "./configure --with-init-dir=/etc/init.d"
+  args:
+    chdir: "{{ guacamole_src_dir + '/guacamole-server-' + guacamole_version }}"
+  become: true
+  register: _guacamole_config_server_build
+  when: not _guacamole_server_installed['stat']['exists'] or extract.changed
+
+- name: install | Compiling Guacamole Server # noqa no-handler
+  community.general.make:
+    chdir: "{{ guacamole_src_dir + '/guacamole-server-' + guacamole_version }}"
+  become: true
+  register: _guacamole_server_compiled
+  when: _guacamole_config_server_build['changed']
+
+- name: install | Installing Guacamole Server # noqa no-handler
+  community.general.make:
+    chdir: "{{ guacamole_src_dir + '/guacamole-server-' + guacamole_version }}"
+    target: install
+  become: true
+  register: _guacamole_server_installed
+  when: _guacamole_server_compiled['changed']
+
+- name: install | Running ldconfig # noqa no-changed-when no-handler
+  ansible.builtin.command: ldconfig
+  become: true
+  when: _guacamole_server_installed['changed']

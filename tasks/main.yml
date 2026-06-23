@@ -1,0 +1,23 @@
+---
+- name: Install Guacamole dependencies
+  ansible.builtin.include_tasks: deps.yml
+
+- name: Install Guacamole
+  ansible.builtin.include_tasks: install.yml
+
+#- name: Configure Guacamole
+#  ansible.builtin.include_tasks: config.yml
+#
+#- name: Manage Guacamole services
+#  ansible.builtin.include_tasks: services.yml
+#
+#- name: Manage Guacamole client configurations
+#  ansible.builtin.include_tasks: client.yml
+#
+#- name: Manage Guacamole LDAP authentication
+#  ansible.builtin.include_tasks: ldap.yml
+#  when: guacamole_ldap is defined
+#
+#- name: Manage Guacamole TOTP configurations
+#  ansible.builtin.include_tasks: totp.yml
+#  when: guacamole_totp is defined

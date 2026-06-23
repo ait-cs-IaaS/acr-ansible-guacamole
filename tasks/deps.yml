@@ -1,0 +1,8 @@
+---
+- name: deps | Install Guacamole dependencies (Ubuntu >=24.04)
+  ansible.builtin.apt:
+    name: "{{ guacamole_ubuntu_deps }}"
+    state: present
+  become: true
+  register: result
+  until: result is successful

@@ -1,0 +1,49 @@
+---
+guacamole_ubuntu_deps:
+  - tomcat10
+  - build-essential
+  - dpkg-dev
+  - freerdp2-x11
+  - ghostscript
+  - libavcodec-dev
+  - libavutil-dev
+  - libcairo2-dev
+  - freerdp2-dev
+  - libjpeg-turbo8-dev
+  - libossp-uuid-dev
+  - libpango1.0-dev
+  - libpng12-dev
+  - libpulse-dev
+  - libssh2-1-dev
+  - libssl-dev
+  - libswscale-dev
+  - libtelnet-dev
+  - libvncserver-dev
+  - libvorbis-dev
+  - libwebp-dev
+
+guacamole_version: 1.6.0
+
+guacamole_dl_url: "{{ 'https://downloads.apache.org/guacamole/' + guacamole_version }}"
+
+guacamole_server_package: "{{ 'guacamole-server-' + guacamole_version + '.tar.gz' }}"
+
+guacamole_src_dir: /usr/local/src
+
+guacamole_users: []
+# - name: user1
+#   password: password
+#   connections:
+#     - host: 10.0.101.50
+#       name: nas01
+#       protocol: ssh
+#       port: 22
+#     - host: 192.168.250.11
+#       name: windows2016
+#       protocol: rdp
+#       port: 3389
+#     - host: 192.168.250.11
+#       name: 192.168.250.11
+#       protocol: vnc
+#       port: 5901
+#       password: password
