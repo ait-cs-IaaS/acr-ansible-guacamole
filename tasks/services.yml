@@ -1,0 +1,8 @@
+---
+- name: services | Ensuring Guacamole Server Service is enabled
+  ansible.builtin.service:
+    name: guacd
+    enabled: true
+    state: started
+  become: true
+  when: guacd_config.install

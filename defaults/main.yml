@@ -1,4 +1,5 @@
 ---
+# Guacamole dependencies on Ubuntu 24-04 repos
 guacamole_ubuntu_deps:
   - tomcat10
   - build-essential
@@ -22,14 +23,24 @@ guacamole_ubuntu_deps:
   - libvorbis-dev
   - libwebp-dev
 
+# Guacamole version to install (and corresponding download URL)
 guacamole_version: 1.6.0
-
 guacamole_dl_url: "{{ 'https://downloads.apache.org/guacamole/' + guacamole_version }}"
-
 guacamole_server_package: "{{ 'guacamole-server-' + guacamole_version + '.tar.gz' }}"
 
+# Where to install Guacamole
 guacamole_src_dir: /usr/local/src
 
+# Name of the Tomcat user and Tomcat service.
+# Both depend on the distro and ansible version.
+# Read the docs before overriding defaults.
+# Check: https://github.com/mrlesmithjr/ansible-guacamole/blob/master/tasks/set_facts.yml
+# Also, note that if you change the name of the Tomcat service you need to add a corresponding handler to restart the service!
+# Check handlers/main.yml.
+guacamole_tomcat_user: tomcat
+guacamole_tomcat_service: tomcat10
+
+# Authorized users
 guacamole_users: []
 # - name: user1
 #   password: password

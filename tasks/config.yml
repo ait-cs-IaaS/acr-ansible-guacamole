@@ -1,10 +1,10 @@
 ---
-- name: config | Ensuring Guacamole folders exist
+- name: config | Ensuring Guacamole Folders Exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: tomcat
-    group: tomcat
+    owner: "{{ guacamole_tomcat_user }}"
+    group: "{{ guacamole_tomcat_user }}"
     mode: u=rwx,g=rx,o=rx
   become: true
   with_items:
@@ -12,12 +12,12 @@
     - /etc/guacamole/lib
     - /etc/guacamole/extensions
 
-- name: config | Configure guacd
+- name: config | Configuring guacd
   ansible.builtin.template:
-    src: etc/guacamole/guacd.conf.j2
+    src: guacd.conf.j2
     dest: /etc/guacamole/guacd.conf
-    owner: tomcat
-    group: tomcat
+    owner: "{{ guacamole_tomcat_user }}"
+    group: "{{ guacamole_tomcat_user }}"
     mode: u=rw,g=r,o=r
   become: true
   notify:
@@ -27,111 +27,30 @@
 
 - name: config | Configuring guacamole.properties
   ansible.builtin.template:
-    src: etc/guacamole/guacamole.properties.j2
+    src: guacamole.properties.j2
     dest: /etc/guacamole/guacamole.properties
-    owner: tomcat
-    group: tomcat
+    owner: "{{ guacamole_tomcat_user }}"
+    group: "{{ guacamole_tomcat_user }}"
     mode: u=rw,g=r,o=r
   become: true
   notify:
-    - "restart tomcat10"
+    - "restart {{ guacamole_tomcat_service }}"
     - kill guacd
     - restart guacd
 
 - name: config | Configuring user-mapping.xml
   ansible.builtin.template:
-    src: etc/guacamole/user-mapping.xml.j2
+    src: user-mapping.xml.j2
     dest: /etc/guacamole/user-mapping.xml
-    owner: tomcat
-    group: tomcat
+    owner: "{{ guacamole_tomcat_user }}"
+    group: "{{ guacamole_tomcat_user }}"
     mode: u=rw,g=r,o=r
   become: true
   notify:
-    - "restart tomcat10"
+    - "restart {{ guacamole_tomcat_service }}"
     - kill guacd
     - restart guacd
   when: guacamole_users is defined and guacamole_users | list | length >= 1
-
-- name: config | Downloading Auth JDBC Library
-  ansible.builtin.unarchive:
-    src: "{{ guacamole_dl_url + '/binary/' + guacamole_auth_jdbc_package }}"
-    dest: "{{ guacamole_src_dir }}"
-    remote_src: true
-  become: true
-  when: guacamole_mysql_auth or guacamole_postgresql_auth
-
-- name: config | Copying Auth JDBC Connector # noqa risky-file-permissions
-  ansible.builtin.copy:
-    src: "{{ guacamole_src_dir + '/' + 'guacamole-auth-jdbc-' + guacamole_version + '/mysql/' + 'guacamole-auth-jdbc-mysql-' + guacamole_version + '.jar' }}"
-    dest: /etc/guacamole/extensions/
-    owner: "{{ guacamole_tomcat_user }}"
-    group: "{{ guacamole_tomcat_user }}"
-    remote_src: true
-  become: true
-  when: guacamole_mysql_auth
-
-- name: config | Copying Auth JDBC Connector # noqa risky-file-permissions
-  ansible.builtin.copy:
-    src: "{{ guacamole_src_dir + '/' + 'guacamole-auth-jdbc-' + guacamole_version + '/postgresql/' + 'guacamole-auth-jdbc-postgresql-' + guacamole_version + '.jar' }}"
-    dest: /etc/guacamole/extensions/
-    owner: "{{ guacamole_tomcat_user }}"
-    group: "{{ guacamole_tomcat_user }}"
-    remote_src: true
-  become: true
-  when: guacamole_postgresql_auth
-
-- name: config | Downloading MySQL Connector
-  ansible.builtin.unarchive:
-    src: "{{ guacamole_mysql_connector_package }}"
-    dest: "{{ guacamole_src_dir }}"
-    remote_src: true
-  become: true
-  when: guacamole_mysql_auth
-
-- name: config | Copying MySQL Connector # noqa risky-file-permissions
-  ansible.builtin.copy:
-    src: "{{ guacamole_src_dir + '/' + 'mysql-connector-j-' + guacamole_mysql_connector_version + '/' + 'mysql-connector-j-' + guacamole_mysql_connector_version + '.jar' }}"
-    dest: /etc/guacamole/lib/
-    owner: "{{ guacamole_tomcat_user }}"
-    group: "{{ guacamole_tomcat_user }}"
-    remote_src: true
-  become: true
-  when: guacamole_mysql_auth
-
-- name: config | Downloading PostgreSQL Connector # noqa risky-file-permissions
-  ansible.builtin.get_url:
-    url: "{{ guacamole_postgresql_connector_package }}"
-    dest: "{{ guacamole_src_dir }}"
-  become: true
-  when: guacamole_postgresql_auth
-
-- name: config | Copying PostgreSQL Connector # noqa risky-file-permissions
-  ansible.builtin.copy:
-    src: "{{ guacamole_src_dir + '/' + 'postgresql-' + guacamole_postgresql_connector_version + '.jar' }}"
-    dest: /etc/guacamole/lib/
-    owner: "{{ guacamole_tomcat_user }}"
-    group: "{{ guacamole_tomcat_user }}"
-    remote_src: true
-  become: true
-  when: guacamole_postgresql_auth
-
-- name: config | Downloading Auth SSO/OpenID Library
-  ansible.builtin.unarchive:
-    src: "{{ guacamole_dl_url + '/binary/' + guacamole_auth_openid_package }}"
-    dest: "{{ guacamole_src_dir }}"
-    remote_src: true
-  become: true
-  when: guacamole_openid_auth
-
-- name: config | Copying Auth OpenID Connector # noqa risky-file-permissions
-  ansible.builtin.copy:
-    src: "{{ guacamole_src_dir + '/' + 'guacamole-auth-sso-' + guacamole_version + '/openid/' + 'guacamole-auth-sso-openid-' + guacamole_version + '.jar' }}"
-    dest: "{{ '/etc/guacamole/extensions/' + guacamole_auth_openid_priority + 'guacamole-auth-openid-' + guacamole_version + '.jar' }}"
-    owner: "{{ guacamole_tomcat_user }}"
-    group: "{{ guacamole_tomcat_user }}"
-    remote_src: true
-  become: true
-  when: guacamole_openid_auth
 
 - name: config | list previous extensions version
   ansible.builtin.find:
@@ -148,134 +67,6 @@
   loop_control:
     loop_var: guacamole_extensions
 
-# Fix ansible-playbook failed issue
-#  "A MySQL module is required: for Python 2.7 either PyMySQL, or MySQL-python, or for Python 3.X mysqlclient or PyMySQL.
-- name: Install Python 3.X mysqlclient
-  ansible.builtin.package:
-    name: python3-mysqldb
-  become: true
-  when: guacamole_mysql_auth
-
-- name: config | Creating Guacamole DB
-  community.mysql.mysql_db:
-    name: "{{ guacamole_mysql_db['name'] }}"
-    login_host: "{{ guacamole_mysql_db['host'] }}"
-    login_port: "{{ guacamole_mysql_db['port'] }}"
-    login_user: "{{ guacamole_mysql_db['username'] | default(omit) }}"
-    login_password: "{{ guacamole_mysql_db['password'] | default(omit) }}"
-    state: present
-  become: true
-  when: guacamole_mysql_auth
-
-- name: config | Creating Guacamole DB
-  community.postgresql.postgresql_db:
-    name: "{{ guacamole_postgresql_db['name'] }}"
-    state: present
-  become: true
-  become_user: postgres
-  when: guacamole_postgresql_auth
-
-- name: config | Creating Guacamole DB User
-  community.mysql.mysql_user:
-    name: "{{ guacamole_mysql_db['username'] }}"
-    password: "{{ guacamole_mysql_db['password'] }}"
-    login_host: "{{ guacamole_mysql_db['host'] }}"
-    login_port: "{{ guacamole_mysql_db['port'] }}"
-    login_user: "{{ guacamole_mysql_db['username'] | default(omit) }}"
-    login_password: "{{ guacamole_mysql_db['password'] | default(omit) }}"
-    priv: "{{ guacamole_mysql_db['name'] + '.*:GRANT,SELECT,INSERT,UPDATE,DELETE' }}"
-    state: present
-  become: true
-  when: guacamole_mysql_auth
-
-- name: config | Creating Guacamole DB User
-  community.postgresql.postgresql_user:
-    db: "{{ guacamole_postgresql_db['name'] }}"
-    name: "{{ guacamole_postgresql_db['username'] }}"
-    password: "{{ guacamole_postgresql_db['password'] }}"
-    state: present
-  become: true
-  become_user: postgres
-  when: guacamole_postgresql_auth
-
-- name: config | Checking If DB Has Been Populated
-  ansible.builtin.stat:
-    path: /etc/guacamole/.db_populated
-  register: _guacamole_db_populated_check
-  when: guacamole_mysql_auth or guacamole_postgresql_auth
-
-- name: config | Popluating DB
-  community.mysql.mysql_db:
-    name: "{{ guacamole_mysql_db['name'] }}"
-    login_host: "{{ guacamole_mysql_db['host'] }}"
-    login_port: "{{ guacamole_mysql_db['port'] }}"
-    login_user: "{{ guacamole_mysql_db['username'] | default(omit) }}"
-    login_password: "{{ guacamole_mysql_db['password'] | default(omit) }}"
-    state: import
-    target: "{{ guacamole_src_dir + '/' + 'guacamole-auth-jdbc-' + guacamole_version + '/mysql/schema/' + item }}"
-  become: true
-  register: _guacamole_db_populated
-  notify:
-    - "restart {{ guacamole_tomcat_service }}"
-    - kill guacd
-    - restart guacd
-  with_items:
-    - 001-create-schema.sql
-    - 002-create-admin-user.sql
-  when: >
-    guacamole_mysql_auth and
-    not _guacamole_db_populated_check['stat']['exists']
-
-- name: config | Popluating DB # noqa no-changed-when
-  ansible.builtin.shell: psql "{{ guacamole_postgresql_db['name'] }}" < "{{ guacamole_src_dir + '/' + 'guacamole-auth-jdbc-' + guacamole_version + '/postgresql/schema/' + item }}"
-  become: true
-  become_user: postgres
-  register: _guacamole_db_populated
-  notify:
-    - "restart {{ guacamole_tomcat_service }}"
-    - kill guacd
-    - restart guacd
-  with_items:
-    - 001-create-schema.sql
-    - 002-create-admin-user.sql
-  when: >
-    guacamole_postgresql_auth and
-    not _guacamole_db_populated_check['stat']['exists']
-
-- name: config | Setting DB permissions
-  community.postgresql.postgresql_privs:
-    database: "{{ guacamole_postgresql_db['name'] }}"
-    schema: public
-    role: "{{ guacamole_postgresql_db['username'] }}"
-    type: table
-    obj: ALL_IN_SCHEMA
-    privs: SELECT,INSERT,UPDATE,DELETE
-  become: true
-  become_user: postgres
-  when: guacamole_postgresql_auth
-
-- name: config | Setting DB permissions
-  community.postgresql.postgresql_privs:
-    database: "{{ guacamole_postgresql_db['name'] }}"
-    schema: public
-    role: "{{ guacamole_postgresql_db['username'] }}"
-    type: sequence
-    obj: ALL_IN_SCHEMA
-    privs: all
-  become: true
-  become_user: postgres
-  when: guacamole_postgresql_auth
-
-- name: config | Marking DB As Populated # noqa no-handler risky-file-permissions
-  ansible.builtin.file:
-    path: /etc/guacamole/.db_populated
-    state: touch
-  become: true
-  when: >
-    (guacamole_mysql_auth or
-     guacamole_postgresql_auth) and
-    _guacamole_db_populated['changed']
-
 - name: config | Creating Tomcat symlink For guacamole.properties
   ansible.builtin.file:
     src: /etc/guacamole
@@ -288,10 +79,3 @@
     - "restart {{ guacamole_tomcat_service }}"
     - kill guacd
     - restart guacd
-
-- name: Update index.hmtl of ROOT in tomcat to redirect to guacamole webapps # noqa no-handler risky-file-permissions
-  ansible.builtin.copy:
-    content: "<meta http-equiv='Refresh' content=\"0; url='{{ guacamole_redirect }}'\"/>"
-    dest: "{{ '/var/lib/' + guacamole_tomcat + '/webapps/ROOT/index.html' }}"
-  when: guacamole_redirect is defined
-  become: true

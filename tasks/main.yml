@@ -5,12 +5,12 @@
 - name: Install Guacamole
   ansible.builtin.include_tasks: install.yml
 
-#- name: Configure Guacamole
-#  ansible.builtin.include_tasks: config.yml
-#
-#- name: Manage Guacamole services
-#  ansible.builtin.include_tasks: services.yml
-#
+- name: Configure Guacamole
+  ansible.builtin.include_tasks: config.yml
+
+- name: Manage Guacamole services
+  ansible.builtin.include_tasks: services.yml
+
 #- name: Manage Guacamole client configurations
 #  ansible.builtin.include_tasks: client.yml
 #
