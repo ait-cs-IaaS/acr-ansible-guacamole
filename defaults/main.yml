@@ -37,8 +37,14 @@ guacamole_src_dir: /usr/local/src
 # Check: https://github.com/mrlesmithjr/ansible-guacamole/blob/master/tasks/set_facts.yml
 # Also, note that if you change the name of the Tomcat service you need to add a corresponding handler to restart the service!
 # Check handlers/main.yml.
+guacamole_tomcat: tomcat10
 guacamole_tomcat_user: tomcat
 guacamole_tomcat_service: tomcat10
+
+# For now, use Guacamole built-in authentication
+guacamole_basic_user_mapping: /etc/guacamole/user-mapping.xml
+guacamole_auth_provider: net.sourceforge.guacamole.net.basic.BasicFileAuthenticationProvider
+guacamole_server_hostname: localhost
 
 # Authorized users
 guacamole_users: []
@@ -58,3 +64,7 @@ guacamole_users: []
 #       protocol: vnc
 #       port: 5901
 #       password: password
+
+# Allow guacd.service to install and manage itself
+guacd_config:
+  install: true
