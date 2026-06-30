@@ -1,7 +1,7 @@
 ---
 # Guacamole dependencies on Ubuntu 24-04 repos
 guacamole_ubuntu_deps:
-  - tomcat10
+  - "{{ guacamole_tomcat }}"
   - build-essential
   - dpkg-dev
   - freerdp2-x11
@@ -27,6 +27,7 @@ guacamole_ubuntu_deps:
 guacamole_version: 1.6.0
 guacamole_dl_url: "{{ 'https://downloads.apache.org/guacamole/' + guacamole_version }}"
 guacamole_server_package: "{{ 'guacamole-server-' + guacamole_version + '.tar.gz' }}"
+guacamole_client_package: "{{ 'guacamole-' + guacamole_version + '.war' }}"
 
 # Where to install Guacamole
 guacamole_src_dir: /usr/local/src
@@ -47,24 +48,32 @@ guacamole_auth_provider: net.sourceforge.guacamole.net.basic.BasicFileAuthentica
 guacamole_server_hostname: localhost
 
 # Authorized users
-guacamole_users: []
-# - name: user1
-#   password: password
-#   connections:
-#     - host: 10.0.101.50
-#       name: nas01
-#       protocol: ssh
-#       port: 22
-#     - host: 192.168.250.11
-#       name: windows2016
-#       protocol: rdp
-#       port: 3389
-#     - host: 192.168.250.11
-#       name: 192.168.250.11
-#       protocol: vnc
-#       port: 5901
-#       password: password
+guacamole_users:
+  - name: user1
+    password: password
+    connections:
+      - host: 10.0.101.50
+        name: nas01
+        protocol: ssh
+        port: 22
+      - host: 192.168.250.11
+        name: windows2016
+        protocol: rdp
+        port: 3389
+      - host: 192.168.250.11
+        name: 192.168.250.11
+        protocol: vnc
+        port: 5901
+        password: password
 
 # Allow guacd.service to install and manage itself
 guacd_config:
   install: true
+
+# RDP settings
+guacamole_rdp_color_depth: 24
+guacamole_rdp_disable_auth: false
+guacamole_rdp_height: 900
+guacamole_rdp_width: 1440
+guacamole_rdp_security: rdp
+guacamole_rdp_ignore_cert: false

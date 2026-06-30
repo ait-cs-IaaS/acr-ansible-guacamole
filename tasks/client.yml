@@ -7,10 +7,24 @@
   register: dl
   until: dl is success
 
-- name: client | Creating Tomcat Symlink For {{ 'guacamole-' + guacamole_version + '.war' }}
+- name: Install Jakarta migration tool
+  ansible.builtin.apt:
+    name: tomcat-jakartaee-migration
+    state: present
+    update_cache: true
+
+- name: Convert Guacamole WAR for Tomcat 10
+  ansible.builtin.command:
+    cmd: >-
+      java -jar /usr/share/tomcat-jakartaee-migration/lib/jakartaee-migration-shaded.jar
+      /etc/guacamole/guacamole-{{ guacamole_version }}.war
+      /etc/guacamole/guacamole-{{ guacamole_version }}_tomcat10.war
+    creates: /etc/guacamole/guacamole-{{ guacamole_version }}_tomcat10.war
+
+- name: client | Creating Tomcat Symlink For {{ 'guacamole-' + guacamole_version + '_tomcat10.war' }}
   ansible.builtin.file:
-    src: "{{ '/etc/guacamole/guacamole-' + guacamole_version + '.war' }}"
-    dest: "{{ '/var/lib/' + guacamole_tomcat + '/webapps/guacamole##' + guacamole_version + '.war' }}"
+    src: "{{ '/etc/guacamole/guacamole-' + guacamole_version + '_tomcat10.war' }}"
+    dest: "{{ '/var/lib/' + guacamole_tomcat + '/webapps/guacamole##' + guacamole_version + '_tomcat10.war' }}"
     state: link
   become: true
   notify:
@@ -21,7 +35,7 @@
 - name: client | list if any Previous guacamole deployed war
   ansible.builtin.find:
     paths: "{{ '/var/lib/' + guacamole_tomcat + '/webapps/' }}"
-    excludes: "{{ 'guacamole##' + guacamole_version + '.war' }}"
+    excludes: "{{ 'guacamole##' + guacamole_version + '_tomcat10.war' }}"
     file_type: link
   register: guacamole_previous_wars
 
@@ -34,9 +48,9 @@
     loop_var: guacamole_previous_war
 
 # Moving here to ensure idempotency as it was failing when included above
-- name: client | Setting Permissions On Tomcat Symlink For {{ 'guacamole-' + guacamole_version + '.war' }}
+- name: client | Setting Permissions On Tomcat Symlink For {{ 'guacamole-' + guacamole_version + '_tomcat10.war' }}
   ansible.builtin.file:
-    path: "{{ '/etc/guacamole/guacamole-' + guacamole_version + '.war' }}"
+    path: "{{ '/etc/guacamole/guacamole-' + guacamole_version + '_tomcat10.war' }}"
     owner: "{{ guacamole_tomcat_user }}"
     group: "{{ guacamole_tomcat_user }}"
   become: true
