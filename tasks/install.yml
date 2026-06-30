@@ -4,7 +4,7 @@
     url: "{{ guacamole_dl_url + '/source/' + guacamole_server_package }}"
     dest: "{{ guacamole_src_dir }}"
   become: true
-ought premium and setup my custom doma
+
 - name: install | Extracting Guacamole Server package
   ansible.builtin.unarchive:
     src: "{{ guacamole_src_dir + '/' + guacamole_server_package }}"
