@@ -48,25 +48,24 @@ guacamole_auth_provider: net.sourceforge.guacamole.net.basic.BasicFileAuthentica
 guacamole_server_hostname: localhost
 
 # Authorized users
-guacamole_users:
-  - name: user1
-    password: password
-    connections:
-      - host: 10.0.101.50
-        name: nas01
-        protocol: ssh
-        port: 22
-      - host: 192.168.250.11
-        name: windows2016
-        protocol: rdp
-        port: 3389
-      - host: 192.168.250.11
-        name: 192.168.250.11
-        protocol: vnc
-        port: 5901
-        password: password
+guacamole_users: []
+  #- name: user1
+  #  password: password
+  #  connections:
+  #    - host: 172.16.32.11
+  #      name: csirt2
+  #      protocol: vnc
+  #      port: 5901
+  #      user: csirt2
+  #      password: mozart.rocks
+  #    - host: 172.16.32.12
+  #      name: csirt3
+  #      protocol: vnc
+  #      port: 5901
+  #      user: csirt3
+  #      password: mozart.rocks
 
-# Allow guacd.service to install and manage itself
+# Install the guacamole daemon
 guacd_config:
   install: true
 
