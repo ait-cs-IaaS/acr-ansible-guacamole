@@ -1,0 +1,22 @@
+---
+
+default_language_version:
+  python: python3.12
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v26.4.0
+    hooks:
+      - id: ansible-lint
+        language_version: python3.12
+        additional_dependencies:
+          - ansible-core==2.21.0
+          - yamllint>=1.32.0

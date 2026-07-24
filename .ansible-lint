@@ -1,0 +1,15 @@
+---
+exclude_paths:
+  - .github
+  - tests
+
+skip_list:
+  - role-name
+  - yaml[line-length]
+  - name[casing]
+  - name[template]
+  - var-naming[no-role-prefix]
+  - no-changed-when
+
+warn_list:
+  - experimental

@@ -3,6 +3,7 @@
   ansible.builtin.get_url:
     url: "{{ guacamole_dl_url + '/binary/' + guacamole_client_package }}"
     dest: "{{ '/etc/guacamole/guacamole-' + guacamole_version + '.war' }}"
+    mode: "0655"
   become: true
   register: dl
   until: dl is success
@@ -28,9 +29,8 @@
     state: link
   become: true
   notify:
-    - "restart {{ guacamole_tomcat_service }}"
-    - kill guacd
-    - restart guacd
+    - Kill guacd
+    - Restart guacd
 
 - name: client | list if any Previous guacamole deployed war
   ansible.builtin.find:

@@ -49,21 +49,21 @@ guacamole_server_hostname: localhost
 
 # Authorized users
 guacamole_users: []
-  #- name: user1
-  #  password: password
-  #  connections:
-  #    - host: 172.16.32.11
-  #      name: csirt2
-  #      protocol: vnc
-  #      port: 5901
-  #      user: csirt2
-  #      password: mozart.rocks
-  #    - host: 172.16.32.12
-  #      name: csirt3
-  #      protocol: vnc
-  #      port: 5901
-  #      user: csirt3
-  #      password: mozart.rocks
+  # - name: user1
+  #   password: password
+  #   connections:
+  #     - host: 172.16.32.11
+  #       name: csirt2
+  #       protocol: vnc
+  #       port: 5901
+  #       user: csirt2
+  #       password: mozart.rocks
+  #     - host: 172.16.32.12
+  #       name: csirt3
+  #       protocol: vnc
+  #       port: 5901
+  #       user: csirt3
+  #       password: mozart.rocks
 
 # Install the guacamole daemon
 guacd_config:

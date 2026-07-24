@@ -12,20 +12,6 @@
     - /etc/guacamole/lib
     - /etc/guacamole/extensions
 
-# Results in an empty file. Check guacd.conf.j2
-#- name: config | Configuring guacd
-#  ansible.builtin.template:
-#    src: guacd.conf.j2
-#    dest: /etc/guacamole/guacd.conf
-#    owner: "{{ guacamole_tomcat_user }}"
-#    group: "{{ guacamole_tomcat_user }}"
-#    mode: u=rw,g=r,o=r
-#  become: true
-#  notify:
-#    - kill guacd
-#    - restart guacd
-#  when: guacd_config.install
-
 - name: config | Configuring guacamole.properties
   ansible.builtin.template:
     src: guacamole.properties.j2
@@ -35,9 +21,8 @@
     mode: u=rw,g=r,o=r
   become: true
   notify:
-    - "restart {{ guacamole_tomcat_service }}"
-    - kill guacd
-    - restart guacd
+    - Kill guacd
+    - Restart guacd
 
 - name: config | Configuring user-mapping.xml
   ansible.builtin.template:
@@ -48,9 +33,8 @@
     mode: u=rw,g=r,o=r
   become: true
   notify:
-    - "restart {{ guacamole_tomcat_service }}"
-    - kill guacd
-    - restart guacd
+    - Kill guacd
+    - Restart guacd
   when: guacamole_users is defined and guacamole_users | list | length >= 1
 
 - name: config | list previous extensions version
@@ -77,6 +61,5 @@
     group: "{{ guacamole_tomcat_user }}"
   become: true
   notify:
-    - "restart {{ guacamole_tomcat_service }}"
-    - kill guacd
-    - restart guacd
+    - Kill guacd
+    - Restart guacd
