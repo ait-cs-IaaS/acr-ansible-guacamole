@@ -1,11 +1,73 @@
 {{ ansible_managed | comment }}
 auth-provider: {{ guacamole_auth_provider }}
 {# Basic User Mapping #}
-{% if guacamole_basic_user_mapping is defined and guacamole_users is defined and guacamole_users | list | length >= 1 %}
+{% if guacamole_basic_user_mapping is defined and guacamole_users is defined and guacamole_users | list | length >= 1 -%}
 basic-user-mapping: {{ guacamole_basic_user_mapping }}
-{% endif %}
+{% endif -%}
 {# Network Configuration #}
 guacd-hostname: {{ guacamole_server_hostname }}
-{% if guacamole_server_port is defined and guacamole_server_port|int %}
+{% if guacamole_server_port is defined and guacamole_server_port|int -%}
 guacd-port: {{ guacamole_server_port }}
-{% endif %}
+{% endif -%}
+{% if guacamole_ldap_enable | bool -%}
+{# LDAP Configuration #}
+ldap-hostname: {{ guacamole_ldap_hostname }}
+ldap-port: {{ guacamole_ldap_port }}
+{% if guacamole_ldap_encryption_method is defined and guacamole_ldap_encryption_method != 'none' -%}
+ldap-encryption-method: {{ guacamole_ldap_encryption_method }}
+{% if guacamole_ldap_ssl_protocol is defined and guacamole_ldap_ssl_protocol -%}
+ldap-ssl-protocol: {{ guacamole_ldap_ssl_protocol }}
+{% endif -%}
+{% endif -%}
+{% if guacamole_ldap_user_base_dn is defined and guacamole_ldap_user_base_dn -%}
+ldap-user-base-dn: {{ guacamole_ldap_user_base_dn }}
+{% endif -%}
+{% if guacamole_ldap_username_attribute is defined and guacamole_ldap_username_attribute -%}
+ldap-username-attribute: {{ guacamole_ldap_username_attribute }}
+{% endif -%}
+{% if guacamole_ldap_search_bind_dn is defined and guacamole_ldap_search_bind_dn -%}
+ldap-search-bind-dn: {{ guacamole_ldap_search_bind_dn }}
+{% endif -%}
+{% if guacamole_ldap_search_bind_password is defined and guacamole_ldap_search_bind_password -%}
+ldap-search-bind-password: {{ guacamole_ldap_search_bind_password }}
+{% endif -%}
+{% if guacamole_ldap_config_base_dn is defined and guacamole_ldap_config_base_dn -%}
+ldap-config-base-dn: {{ guacamole_ldap_config_base_dn }}
+{% endif -%}
+{% if guacamole_ldap_group_base_dn is defined and guacamole_ldap_group_base_dn -%}
+ldap-group-base-dn: {{ guacamole_ldap_group_base_dn }}
+{% endif -%}
+{% if guacamole_ldap_group_name_attribute is defined and guacamole_ldap_group_name_attribute -%}
+ldap-group-name-attribute: {{ guacamole_ldap_group_name_attribute }}
+{% endif -%}
+{% if guacamole_ldap_user_search_filter is defined and guacamole_ldap_user_search_filter -%}
+ldap-user-search-filter: {{ guacamole_ldap_user_search_filter }}
+{% endif -%}
+{% if guacamole_ldap_group_search_filter is defined and guacamole_ldap_group_search_filter -%}
+ldap-group-search-filter: {{ guacamole_ldap_group_search_filter }}
+{% endif -%}
+{% if guacamole_ldap_user_attributes is defined and guacamole_ldap_user_attributes -%}
+ldap-user-attributes: {{ guacamole_ldap_user_attributes }}
+{% endif -%}
+{% if guacamole_ldap_member_attribute is defined and guacamole_ldap_member_attribute -%}
+ldap-member-attribute: {{ guacamole_ldap_member_attribute }}
+{% endif -%}
+{% if guacamole_ldap_member_attribute_type is defined and guacamole_ldap_member_attribute_type -%}
+ldap-member-attribute-type: {{ guacamole_ldap_member_attribute_type }}
+{% endif -%}
+{% if guacamole_ldap_dereference_aliases is defined and guacamole_ldap_dereference_aliases -%}
+ldap-dereference-aliases: {{ guacamole_ldap_dereference_aliases }}
+{% endif -%}
+{% if guacamole_ldap_follow_referrals is defined -%}
+ldap-follow-referrals: {{ guacamole_ldap_follow_referrals | string | lower }}
+{% endif -%}
+{% if guacamole_ldap_max_referral_hops is defined and guacamole_ldap_max_referral_hops -%}
+ldap-max-referral-hops: {{ guacamole_ldap_max_referral_hops }}
+{% endif -%}
+{% if guacamole_ldap_operation_timeout is defined and guacamole_ldap_operation_timeout -%}
+ldap-operation-timeout: {{ guacamole_ldap_operation_timeout }}
+{% endif -%}
+{% if guacamole_ldap_max_search_results is defined and guacamole_ldap_max_search_results -%}
+ldap-max-search-results: {{ guacamole_ldap_max_search_results }}
+{% endif -%}
+{% endif -%}

@@ -21,6 +21,7 @@
     mode: u=rw,g=r,o=r
   become: true
   notify:
+    - Restart tomcat10
     - Kill guacd
     - Restart guacd
 

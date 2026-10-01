@@ -13,3 +13,8 @@
 
 - name: Manage Guacamole client configurations
   ansible.builtin.include_tasks: client.yml
+
+- name: Configure Guacamole LDAP extension
+  ansible.builtin.include_tasks: ldap.yml
+  when: guacamole_ldap_enable | bool
+

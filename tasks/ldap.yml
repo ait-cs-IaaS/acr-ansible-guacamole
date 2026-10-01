@@ -1,0 +1,26 @@
+---
+- name: ldap | Downloading Guacamole LDAP Extension Package
+  ansible.builtin.get_url:
+    url: "{{ guacamole_dl_url + '/binary/' + guacamole_ldap_package }}"
+    dest: "{{ guacamole_src_dir + '/' + guacamole_ldap_package }}"
+    mode: "0644"
+  become: true
+  register: dl_ldap
+  until: dl_ldap is success
+
+- name: ldap | Extracting Guacamole LDAP Extension JAR
+  ansible.builtin.unarchive:
+    src: "{{ guacamole_src_dir + '/' + guacamole_ldap_package }}"
+    dest: /etc/guacamole/extensions
+    remote_src: true
+    creates: "/etc/guacamole/extensions/guacamole-auth-ldap-{{ guacamole_version }}.jar"
+    extra_opts:
+      - --strip-components=1
+      - --wildcards
+      - "*.jar"
+    owner: "{{ guacamole_tomcat_user }}"
+    group: "{{ guacamole_tomcat_user }}"
+    mode: "0644"
+  become: true
+  notify:
+    - Restart tomcat10

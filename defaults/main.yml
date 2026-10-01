@@ -28,6 +28,8 @@ guacamole_version: 1.6.0
 guacamole_dl_url: "{{ 'https://downloads.apache.org/guacamole/' + guacamole_version }}"
 guacamole_server_package: "{{ 'guacamole-server-' + guacamole_version + '.tar.gz' }}"
 guacamole_client_package: "{{ 'guacamole-' + guacamole_version + '.war' }}"
+guacamole_auth_ldap_package: "{{ 'guacamole-auth-ldap-' + guacamole_version + '.tar.gz' }}"
+guacamole_ldap_package: "{{ guacamole_auth_ldap_package }}"
 
 # Where to install Guacamole
 guacamole_src_dir: /usr/local/src
@@ -76,3 +78,28 @@ guacamole_rdp_height: 900
 guacamole_rdp_width: 1440
 guacamole_rdp_security: rdp
 guacamole_rdp_ignore_cert: false
+
+# LDAP authentication
+guacamole_ldap_enable: false
+guacamole_ldap_hostname: localhost
+guacamole_ldap_port: 389
+guacamole_ldap_encryption_method: none  # none, ssl, starttls
+guacamole_ldap_ssl_protocol: TLSv1.3
+guacamole_ldap_user_base_dn: ""
+guacamole_ldap_username_attribute: uid
+guacamole_ldap_search_bind_dn: ""
+guacamole_ldap_search_bind_password: ""
+guacamole_ldap_config_base_dn: ""
+guacamole_ldap_group_base_dn: ""
+guacamole_ldap_group_name_attribute: cn
+guacamole_ldap_user_search_filter: ""
+guacamole_ldap_group_search_filter: ""
+guacamole_ldap_user_attributes: ""
+guacamole_ldap_member_attribute: member
+guacamole_ldap_member_attribute_type: dn
+guacamole_ldap_dereference_aliases: never
+guacamole_ldap_follow_referrals: false
+guacamole_ldap_max_referral_hops: 5
+guacamole_ldap_operation_timeout: 30
+guacamole_ldap_max_search_results: 1000
+
